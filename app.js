@@ -1,76 +1,69 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Post = require('./models/post'); // Assuming you have a Post model defined
+const bodyParser = require('body-parser');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
-app.use(express.json());
-app.use(express.static('public'));
 
-// MongoDB connection (Ensure .env is configured)
-require('dotenv').config();
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// Middleware
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log('MongoDB connection error:', err));
+    .catch(err => console.log('MongoDB connection error: ', err));
 
-// API route to fetch latest posts
-app.get('/api/posts', async (req, res) => {
+// Post model
+const Post = require('./models/post');
+
+// Routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.get('/posts', async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }).limit(5); // Fetch latest 5 posts
+        const posts = await Post.find();
         res.json(posts);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch posts' });
-    }
-});
-
-// API route to add a new post
-app.post('/api/posts', async (req, res) => {
-    const { title, content } = req.body;
-    
-    if (!title || !content) {
-        return res.status(400).json({ error: 'Title and content are required' });
-    }
-
-    try {
-        const newPost = new Post({ title, content });
-        await newPost.save();
-        res.status(201).json({ message: 'Post added successfully' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to add post' });
-    }
-});
-
-// Fetch posts from the database
-app.get('/', async (req, res) => {
-    try {
-        const posts = await Post.find().sort({ createdAt: -1 }).exec(); // Fetch posts, sorted by latest
-        res.render('index', { posts }); // Render index page with posts
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching posts');
-    }
-});
-
-// Route to get posts in JSON format
-app.get('/api/posts', async (req, res) => {
-    try {
-        const posts = await Post.find().sort({ createdAt: -1 }).exec();
-        res.json(posts); // Send posts as JSON
-    } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Error fetching posts' });
     }
 });
 
-// Other routes, like for serving index.html, admin.html, etc.
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+app.post('/add-post', async (req, res) => {
+    const { title, content, imageUrl } = req.body;
+
+    const newPost = new Post({
+        title,
+        content,
+        imageUrl
+    });
+
+    try {
+        await newPost.save();
+        res.json({ message: 'Post added successfully!' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding post' });
+    }
 });
 
-app.get('/admin.html', (req, res) => {
-    res.sendFile(__dirname + '/public/admin.html');
+app.get('/post/:id', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        res.json(post);
+    } catch (err) {
+        res.status(500).json({ message: 'Post not found' });
+    }
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
 });
