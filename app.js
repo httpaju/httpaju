@@ -14,6 +14,26 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.log('MongoDB connection error: ', err));
 
+
+const mongoose = require('mongoose');
+
+const postSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+module.exports = mongoose.model('Post', postSchema);
+
 // Route for homepage
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
