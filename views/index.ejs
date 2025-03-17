@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AJ Applications Blog</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <h1>AJ Applications Blog</h1>
+    <ul>
+        <% posts.forEach(post => { %>
+            <li><a href="/post/<%= post._id %>"><%= post.title %></a></li>
+        <% }); %>
+    </ul>
+    <a href="/admin">Admin Panel</a>
+</body>
+</html>

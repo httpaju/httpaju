@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <form action="/admin/create" method="POST">
+        <input type="text" name="title" placeholder="Title" required>
+        <textarea name="content" placeholder="Content" required></textarea>
+        <input type="text" name="author" placeholder="Author" required>
+        <button type="submit">Create Post</button>
+    </form>
+    <a href="/admin/logout">Logout</a>
+</body>
+</html>
