@@ -39,6 +39,16 @@ app.post('/api/posts', async (req, res) => {
     }
 });
 
+// Fetch posts from the database
+app.get('/', async (req, res) => {
+    try {
+        const posts = await Post.find().sort({ createdAt: -1 }).exec(); // Fetch posts, sorted by latest
+        res.render('index', { posts }); // Render index page with posts
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching posts');
+    }
+});
 
 // Other routes, like for serving index.html, admin.html, etc.
 app.get('/', (req, res) => {
