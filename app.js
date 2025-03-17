@@ -22,6 +22,24 @@ app.get('/api/posts', async (req, res) => {
     }
 });
 
+// API route to add a new post
+app.post('/api/posts', async (req, res) => {
+    const { title, content } = req.body;
+    
+    if (!title || !content) {
+        return res.status(400).json({ error: 'Title and content are required' });
+    }
+
+    try {
+        const newPost = new Post({ title, content });
+        await newPost.save();
+        res.status(201).json({ message: 'Post added successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to add post' });
+    }
+});
+
+
 // Other routes, like for serving index.html, admin.html, etc.
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
