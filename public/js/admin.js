@@ -1,29 +1,49 @@
-
-document.addEventListener("DOMContentLoaded", () => {
-    fetch('/api/posts')  // Fetching posts from API
-        .then(response => response.json())
-        .then(posts => {
-            const postsContainer = document.getElementById('posts-container');
-
-            if (posts.length === 0) {
-                postsContainer.innerHTML = "<p>No posts available at the moment.</p>";
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle post submission
+    const postForm = document.getElementById('post-form');
+    postForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+        
+        try {
+            const response = await fetch('/api/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content })
+            });
+            
+            if (response.ok) {
+                alert('Post added successfully!');
+                postForm.reset();
             } else {
-                posts.forEach(post => {
-                    const postDiv = document.createElement('div');
-                    postDiv.classList.add('post');
-
-                    postDiv.innerHTML = `
-                        <h3>${post.title}</h3>
-                        <p>${post.content.substring(0, 100)}...</p>
-                        <a href="/post/${post._id}">Read more</a>
-                    `;
-                    postsContainer.appendChild(postDiv);
-                });
+                alert('Error adding post.');
             }
-        })
-        .catch(err => {
-            console.error("Error fetching posts:", err);
-            const postsContainer = document.getElementById('posts-container');
-            postsContainer.innerHTML = "<p>Error loading posts.</p>";
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Handle dynamic button submission
+    const linkForm = document.getElementById('link-form');
+    const buttonsContainer = document.getElementById('buttons-container');
+
+    linkForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const label = document.getElementById('label').value;
+        const url = document.getElementById('url').value;
+
+        const button = document.createElement('button');
+        button.textContent = label;
+        button.addEventListener('click', () => {
+            window.open(url, '_blank');
         });
+
+        buttonsContainer.appendChild(button);
+        linkForm.reset();
+    });
 });
