@@ -9,43 +9,28 @@
 <body>
     <h1>Welcome to AJ Applications Blog</h1>
 
-    <div id="latest-posts"></div> <!-- Container for posts -->
-
-  
-
-    <script>
-        // Fetch posts from API and display them
-        async function loadPosts() {
-            try {
-                const response = await fetch('/api/posts'); // Fetch posts from API
-                const posts = await response.json(); // Convert response to JSON
-
-                const postsContainer = document.getElementById('latest-posts');
-
+    <div id="posts">
+        <!-- Display posts here -->
+        <script>
+            fetch('/posts')
+            .then(response => response.json())
+            .then(posts => {
+                const postContainer = document.getElementById('posts');
                 if (posts.length === 0) {
-                    postsContainer.innerHTML = '<p>No posts available.</p>';
+                    postContainer.innerHTML = '<p>No posts available.</p>';
                 } else {
                     posts.forEach(post => {
-                        const postElement = document.createElement('div');
-                        postElement.classList.add('post');
-                        
-                        postElement.innerHTML = `
-                            <h2>${post.title}</h2>
-                            <p>${post.content.substring(0, 200)}...</p>
-                            <a href="/post/${post._id}">Read More</a>
+                        postContainer.innerHTML += `
+                            <div class="post">
+                                <h2>${post.title}</h2>
+                                <p>${post.content.substring(0, 200)}...</p>
+                                <a href="/post/${post._id}">Read More</a>
+                            </div>
                         `;
-                        
-                        postsContainer.appendChild(postElement);
                     });
                 }
-            } catch (err) {
-                console.error('Error fetching posts:', err);
-                document.getElementById('latest-posts').innerHTML = '<p>Error loading posts.</p>';
-            }
-        }
-
-        // Call the function to load posts when the page loads
-        window.onload = loadPosts;
-    </script>
+            });
+        </script>
+    </div>
 </body>
 </html>
