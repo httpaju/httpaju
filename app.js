@@ -1,23 +1,30 @@
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Post = require('./models/post');
+require('dotenv').config(); // To load environment variables from a .env file
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-mongoose.connect('mongodb://localhost:27017/blogDB', { useNewUrlParser: true, useUnifiedTopology: true });
+// MongoDB Atlas connection string stored in environment variable
+const mongoURI = process.env.MONGODB_URI;
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => console.log('MongoDB connection error: ', err));
 
+// Route for homepage
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+// Route for admin panel
 app.get('/admin', (req, res) => {
     res.sendFile(__dirname + '/public/admin.html');
 });
 
+// Handling form submission for new blog posts
 app.post('/admin', (req, res) => {
     const post = new Post({
         title: req.body.title,
@@ -26,10 +33,14 @@ app.post('/admin', (req, res) => {
     post.save((err) => {
         if (!err) {
             res.redirect('/');
+        } else {
+            res.send('Error saving the post: ' + err);
         }
     });
 });
 
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
+// Start the server
+const port = process.env.PORT || 3000; // Use the PORT provided by Render, or default to 3000
+app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
 });
