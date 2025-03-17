@@ -1,14 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Home</title>
+    <title>AJ Applications Blog</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <h1>Welcome to AJ Applications Blog</h1>
-    <a href="/admin">Go to Admin Panel</a>
+
+    <div id="latest-posts">
+        <% if (posts.length === 0) { %>
+            <p>No posts available.</p>
+        <% } else { %>
+            <% posts.forEach(post => { %>
+                <div class="post">
+                    <h2><%= post.title %></h2>
+                    <p><%= post.content.substring(0, 200) %>...</p> <!-- Show a snippet of the content -->
+                    <a href="/post/<%= post._id %>">Read More</a>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+   
 </body>
 </html>
