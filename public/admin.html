@@ -4,34 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <h1>Admin Panel - Add New Post</h1>
-    
-    <form id="post-form">
-        <label for="title">Post Title:</label>
-        <input type="text" id="title" name="title" required><br>
+    <h1>Admin Panel - Add New Blog Post</h1>
 
-        <label for="content">Post Content:</label>
-        <textarea id="content" name="content" required></textarea><br>
+    <form id="addPostForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea>
+
+        <label for="image">Image URL:</label>
+        <input type="text" id="image" name="image">
 
         <button type="submit">Add Post</button>
     </form>
 
-    <h2>Manage Links</h2>
-    <form id="link-form">
-        <label for="link">Button Label:</label>
-        <input type="text" id="label" name="label" required><br>
+    <div id="message"></div>
 
-        <label for="url">Button URL:</label>
-        <input type="url" id="url" name="url" required><br>
-
-        <button type="submit">Add Button</button>
-    </form>
-
-    <div id="buttons-container"></div>
-
-    <script src="js/admin.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
 </html>
