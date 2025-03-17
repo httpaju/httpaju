@@ -50,6 +50,17 @@ app.get('/', async (req, res) => {
     }
 });
 
+// Route to get posts in JSON format
+app.get('/api/posts', async (req, res) => {
+    try {
+        const posts = await Post.find().sort({ createdAt: -1 }).exec();
+        res.json(posts); // Send posts as JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching posts' });
+    }
+});
+
 // Other routes, like for serving index.html, admin.html, etc.
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
